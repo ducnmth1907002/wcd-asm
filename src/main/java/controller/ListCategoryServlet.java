@@ -17,21 +17,26 @@ public class ListCategoryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int first = 0, last = 0, pages = 1;
+        int total = 5, currentPage = 1;
+        int totalRows = new GenericRepository<>(Category.class).getCountCategory();
+
+        int totalPages = totalRows / total;
+        if (totalRows % total != 0){
+            totalPages += 1;
+        }
         if (req.getParameter("pages") != null) {
-            pages = (int) Integer.parseInt(req.getParameter("pages"));
+            currentPage = Integer.parseInt(req.getParameter("pages"));
         }
-        int total = new GenericRepository<>(Category.class).getCountCategory();
-        if (total <= 5) {
-            first = 0;
-            last = total;
-        } else {
-            first = (pages - 1) * 5;
-            last = 5;
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
         }
-        req.setAttribute("categories", categoryService.getList(first, last));
+        int index = (currentPage - 1) * total;
+
+        req.setAttribute("categories", categoryService.getList(index, total));
+        req.setAttribute("totalRows", totalRows);
         req.setAttribute("total", total);
-        req.setAttribute("pages", pages);
+        req.setAttribute("currentPage", currentPage);
+        req.setAttribute("totalPages", totalPages);
         req.getRequestDispatcher("/category/list.jsp").forward(req, resp);
     }
 }

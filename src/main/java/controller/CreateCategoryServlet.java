@@ -16,6 +16,7 @@ public class CreateCategoryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("status", "");
         req.getRequestDispatcher("/category/create.jsp").forward(req, resp);
     }
 
@@ -24,9 +25,9 @@ public class CreateCategoryServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         Category category = new Category();
         category.setName(req.getParameter("name"));
-        boolean res = categoryService.create(category);
-        if (res) {
-            req.setAttribute("status", "Tạo món ăn thất bại yêu cầu nhập đầy đủ thông tin và đúng định dạng !!!!");
+        boolean result = categoryService.create(category);
+        if (!result) {
+            req.setAttribute("status", "Không để trống tên category");
             req.getRequestDispatcher("/category/create.jsp").forward(req, resp);
             return;
         }

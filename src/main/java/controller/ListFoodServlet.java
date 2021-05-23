@@ -21,25 +21,28 @@ public class ListFoodServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         List<Category> categories = categoryService.findByCondition();
-        int first = 0, last = 0, pages = 1;
+        int total = 5, currentPage = 1;
+        int totalRows = new GenericRepository<>(Food.class).getCountFood();
+        int totalPages = totalRows / total;
+        if (totalRows % total != 0){
+            totalPages += 1;
+        }
         if (req.getParameter("pages") != null) {
-            pages = (int) Integer.parseInt(req.getParameter("pages"));
+            currentPage = Integer.parseInt(req.getParameter("pages"));
         }
-        int total = new GenericRepository<>(Food.class).getCountFood();
-        if (total < 5) {
-            first = 0;
-            last = total;
-        } else {
-            first = (pages - 1) * 5;
-            last = 5;
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
         }
-        List<Food> food = foodService.getList(first, last);
-        req.setAttribute("foods", foodService.getList(first, last));
+        int index = (currentPage - 1) * total;
+
+        //Lấy ra danh sách sản phẩm
+        req.setAttribute("foods", foodService.getList(index, total));
+        req.setAttribute("totalRows", totalRows);
         req.setAttribute("total", total);
+        req.setAttribute("currentPage", currentPage);
+        req.setAttribute("totalPages", totalPages);
         req.setAttribute("categories", categories);
-        req.setAttribute("pages", pages);
         req.getRequestDispatcher("/food/list.jsp").forward(req, resp);
     }
 }

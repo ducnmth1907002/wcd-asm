@@ -14,8 +14,8 @@
     List<Category> categories = (ArrayList<Category>) request.getAttribute("categories");
     String linkImage = "https://res.cloudinary.com/ducnguyen3156/image/upload/w_100,c_scale/";
 %>
-<% int total = (int) request.getAttribute("total"); %>
-<% int pages = (int) request.getAttribute("pages"); %>
+<% int currentPage = (int) request.getAttribute("currentPage"); %>
+<% int totalPages = (int) request.getAttribute("totalPages"); %>
 
 <c:set var="bodyContent">
     <!-- Nội dung cần thêm -->
@@ -42,7 +42,7 @@
         <tbody>
         <% if (foods != null && foods.size() > 0) {
             for (int i = 0; i < foods.size(); i++) {
-            %>
+        %>
         <tr>
             <td scope="col" style="text-align: center"><%=foods.get(i).getId()%>
             </td>
@@ -82,86 +82,23 @@
             </td>
         </tr>
         <%
-        }
-       }%>
+                }
+            }%>
         </tbody>
     </table>
+    <% if (totalPages > 1) { %>
     <nav aria-label="Page navigation example">
         <ul class="pagination" style="align-content: center">
-            <%                //Button Previous
-                int back = 0;
-                if (pages == 0 || pages == 1) {
-                    back = 1;//Luon la page 1
-                } else {
-                    back = pages - 1;//Neu pages tu 2 tro len thi back tru 1
-                }
-            %>
-            <li class="page-item"><a class="page-link" href="list?pages=<%=back%>">Previous</a></li>
-            <%
-                //Button Number pages
-                int loop = 0, num = 0;
-                if ((total / 4) % 2 == 0) {
-                    num = total / 4;
-                } else {
-                    num = (total + 1) / 4;
-                }
-                //Nếu total lẻ thêm 1
-                if (total % 2 != 0) {
-                    loop = (total / 4) + 1;
-
-                } else {
-                    //Nếu total chẵn nhỏ hơn fullpage và # fullPage thì thêm 1
-                    if (total < (num * 4) + 4 && total != num * 4) {
-                        loop = (total / 4) + 1;
-                    } else {
-                        //Nếu bằng fullPage thì không thêm
-                        loop = (total / 4);
-                    }
-                }
-                //Lap so pages
-                for (int i = 1; i < loop; i++) {%>
-            <% if (pages == i) {%>
-            <li class="page-item active">
-                <a class="page-link" href="list?pages=<%=i%>"><%=i%> <span class="sr-only">(current)</span></a>
+            <li class="page-item <%= currentPage <= 1 ? "disabled" : ""%>"><a class="page-link" href="list?pages=<%=currentPage - 1%>">Previous</a></li>
+            <% for (int i = 1; i < totalPages + 1; i++) { %>
+            <li class="page-item <%=  i == currentPage ? "active" : "" %>">
+                <a class="page-link" href="list?pages=<%=i%>"> <%=i%>  <%=  i == currentPage ? "<span class=\"sr-only\">(current)</span>" : "" %></a>
             </li>
-            <%} else {%>
-            <li class="page-item"><a class="page-link" href="list?pages=<%=i%>"><%=i%></a></li>
-
-            <%}
-            }%>
-            <%
-                //Button Next
-                int next = 0;
-                //Nếu total lẻ
-                if (total % 2 != 0) {
-                    if (pages == (total / 4) + 1) {
-                        next = pages;//Khong next
-                    } else {
-                        next = pages + 1;//Co next
-                    }
-                } else {
-                    //Nếu total chẵn nhỏ hơn fullpage
-                    //Và không fullPage thì thêm 1
-                    if (total < (num * 4) + 4 && total != num * 4) {
-                        if (pages == (total / 4) + 1) {
-                            next = pages;//Khong next
-                        } else {
-                            next = pages + 1;//Co next
-                        }
-                    } else {
-                        //Nếu fullPage đến trang cuối dừng
-                        //Chưa tới trang cuối thì được next
-                        if (pages == (total / 4)) {
-                            next = pages;//Khong next
-                        } else {
-                            next = pages + 1;//Co next
-                        }
-                    }
-                }
-            %>
-            <li class="page-item"><a class="page-link" href="list?pages=<%=next%>">Next</a></li>
+            <% } %>
+            <li class="page-item <%= currentPage >= totalPages ? "disabled" : ""%>"><a class="page-link" href="list?pages=<%=currentPage + 1%>">Next</a></li>
         </ul>
     </nav>
+    <% } %>
 </c:set>
 
 <mt:layoutAdmin title="List Food">

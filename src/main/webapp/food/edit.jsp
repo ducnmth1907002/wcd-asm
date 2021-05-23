@@ -16,8 +16,8 @@
 
 <c:set var="bodyContent">
     <!-- Nội dung cần thêm -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Create Food</h1>
+    <div class="align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Edit Food</h1>
     </div>
     <div style="width: 80vw; margin: 0 auto">
         <p class="text-danger"><%=status%>
