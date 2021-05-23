@@ -31,6 +31,9 @@ public class ListFoodServlet extends HttpServlet {
         if (req.getParameter("pages") != null) {
             currentPage = Integer.parseInt(req.getParameter("pages"));
         }
+        if (req.getParameter("limit") != null) {
+            total = Integer.parseInt((req.getParameter("limit")));
+        }
         if (currentPage > totalPages) {
             currentPage = totalPages;
         }
